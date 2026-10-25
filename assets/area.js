@@ -54,8 +54,9 @@
       var p = c.stato === 'pagato' || c.stato === 'concluso' ? eur(c.provvigione) : c.stato === 'respinto' ? '—' : '<span class="muted">' + eur(c.provvigione) + ' potenziali</span>';
       return '<tr><td>' + date(c.creato_il) + '</td><td>' + c.livello + '°</td><td>' + esc(c.agente) + '</td><td><b>' + esc(c.cliente) + '</b></td><td>' +
         (c.telefono ? esc(c.telefono) + '<br><span class="muted">' + esc(c.email) + '</span>' : '<span class="muted">riservati</span>') + '</td><td>' +
-        (c.importo ? eur(c.importo) : '—') + '</td><td>' + (c.costo_pratica ? eur(c.costo_pratica) : '—') + '</td><td>' + MIA.chip(c.stato) + '</td><td>' + p + '</td></tr>';
-    }).join('') : '<tr><td colspan="9"><div class="empty">Nessun cliente ancora. Condividi il tuo link per i clienti.</div></td></tr>';
+        (c.importo ? eur(c.importo) : '—') + '</td><td>' + (c.costo_pratica ? eur(c.costo_pratica) : '—') + '</td><td>' + MIA.chip(c.stato) + '</td><td>' + amici(c) + '</td><td>' +
+        (c.sconto ? '<b>−' + eur(c.sconto) + '</b>' : '—') + '</td><td>' + p + '</td></tr>';
+    }).join('') : '<tr><td colspan="11"><div class="empty">Nessun cliente ancora. Condividi il tuo link per i clienti.</div></td></tr>';
 
     $('prov-sum').innerHTML = [['Maturate', me.maturate], ['Da liquidare', me.da_liquidare], ['Liquidate', me.liquidate], ['Potenziali', potenziale]].map(function (x) {
       return '<div class="card"><span class="muted small">' + x[0] + '</span><b style="display:block;font-size:30px;font-weight:600">' + eur(x[1]) + '</b></div>';
@@ -66,6 +67,12 @@
 
     MIA.tabs(d.querySelector('.dash > .tabs'));
     if (me.is_admin) { $('t-admin').hidden = false; MIA.tabs($('admin-tabs')); }
+  }
+
+  // friends brought by a client: accepted / announced, plus who presented this client
+  function amici(c) {
+    var x = (c.amici_accettati || 0) + ' accettati' + (c.amici_previsti ? ' su ' + c.amici_previsti + ' previsti' : '');
+    return x + (c.presentato_da ? '<br><span class="muted small">presentato da ' + esc(c.presentato_da) + '</span>' : '');
   }
 
   function renderNetwork(me, net) {
@@ -112,7 +119,7 @@
   function loadAdmin() {
     adminErr();
     return Promise.all([rpc('admin_clients'), rpc('admin_agents'), rpc('admin_commissions')]).then(function (r) {
-      renderAdminClients(r[0] || []); renderAdminAgents(r[1] || []); renderAdminProv(r[2] || []);
+      renderAdminClients(r[0] || []); renderAdminAgents(r[1] || []); renderAdminProv(r[2] || []); renderAdminSum(r[0] || [], r[2] || []);
     }).catch(adminErr);
   }
   function renderAdminClients(rows) {
@@ -123,10 +130,14 @@
         (c.attivita ? '<br><span class="muted small">' + esc(c.attivita) + '</span>' : '') + '</td><td>' + esc(c.telefono) + '<br><span class="muted">' + esc(c.email) + '</span></td><td>' +
         (c.agente ? esc(c.agente) : '<span class="muted">diretto</span>') + '</td><td>' +
         (editable ? '<input type="number" min="1000" max="100000" step="500" value="' + (c.importo || '') + '" data-imp style="width:110px"> <button class="btn btn-xs" data-act="imp" type="button">Salva</button>' : (c.importo ? eur(c.importo) : '—')) +
-        '</td><td>' + (c.costo_pratica ? eur(c.costo_pratica) : '—') + '</td><td>' + MIA.chip(c.stato) + '</td><td>' +
+        '</td><td>' + (c.costo_pratica ? eur(c.costo_pratica) : '—') + (c.sconto ? '<br><span class="small">sconto −' + eur(c.sconto) + '<br><b>da pagare ' + eur(Math.max(0, c.costo_pratica - c.sconto)) + '</b></span>' : '') +
+        '</td><td>' + amici(c) + (c.codice_amico ? '<br><span class="muted small">codice amico ' + esc(c.codice_amico) + '</span>' : '') + '</td><td>' +
+        (c.presentato_da ? esc(c.presentato_da) : c.presentato_da_testo ? '<span class="muted">scritto dal cliente:</span> ' + esc(c.presentato_da_testo) : '<span class="muted">—</span>') +
+        '<br><input type="text" placeholder="codice amico" data-cod style="width:110px;margin-top:6px"> <button class="btn btn-xs" data-act="pres" type="button">Collega</button></td><td>' + MIA.chip(c.stato) + '</td><td>' +
         (next.length ? '<select data-stato>' + next.map(function (s) { return '<option value="' + s + '">' + MIA.stati[s] + '</option>'; }).join('') + '</select> <button class="btn btn-xs" data-act="stato" type="button">Applica</button>' : '<span class="muted">—</span>') +
-        '</td><td>' + (c.documenti && c.documenti.length ? c.documenti.map(function (p, i) { return '<a href="#" data-doc="' + esc(p) + '">Doc ' + (i + 1) + '</a>'; }).join(' · ') : '<span class="muted">nessuno</span>') + '</td></tr>';
-    }).join('') : '<tr><td colspan="9"><div class="empty">Nessun cliente.</div></td></tr>';
+        '</td><td>' + (c.documenti && c.documenti.length ? c.documenti.map(function (p, i) { return '<a href="#" data-doc="' + esc(p) + '">Doc ' + (i + 1) + '</a>'; }).join(' · ') : '<span class="muted">nessuno</span>') +
+        '</td><td><button class="btn btn-xs btn-danger" data-act="del" type="button">Elimina</button></td></tr>';
+    }).join('') : '<tr><td colspan="12"><div class="empty">Nessun cliente.</div></td></tr>';
   }
   $('ta-clienti') && $('ta-clienti').addEventListener('click', function (e) {
     var t = e.target, tr = t.closest('tr'); if (!tr) return;
@@ -141,6 +152,18 @@
       t.disabled = true;
       rpc('admin_set_status', { p_id: tr.dataset.id, p_stato: s, p_note: null }).then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
     }
+    if (t.dataset.act === 'pres') {
+      t.disabled = true;
+      rpc('admin_set_presentatore', { p_id: tr.dataset.id, p_codice: tr.querySelector('[data-cod]').value }).then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
+    }
+    if (t.dataset.act === 'del') {
+      var nome = tr.querySelector('b').textContent;
+      if (!confirm('Eliminare definitivamente ' + nome + '? Si cancellano anche i suoi documenti e le provvigioni collegate, comprese quelle già liquidate.')) return;
+      t.disabled = true;
+      rpc('admin_delete_client', { p_id: tr.dataset.id }).then(function (docs) {
+        return docs && docs.length ? db.storage.from('documenti-clienti').remove(docs) : null;
+      }).then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
+    }
     if (t.dataset.act === 'imp') {
       t.disabled = true;
       rpc('admin_set_importo', { p_id: tr.dataset.id, p_importo: Number(tr.querySelector('[data-imp]').value) || null }).then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
@@ -149,16 +172,39 @@
   function renderAdminAgents(rows) {
     $('ta-agenti').innerHTML = rows.map(function (a) {
       return '<tr data-id="' + a.id + '"><td>' + date(a.iscritto_il) + '</td><td><b>' + esc(a.nome + ' ' + a.cognome) + '</b><br><span class="muted">' + a.ref_code + '</span></td><td>' + esc(a.telefono) + '<br><span class="muted">' + esc(a.email) + '</span></td><td>' +
-        date(a.data_nascita) + '</td><td>' + (a.iscritto_oam ? 'Sì' : 'No') + '</td><td>' + esc(a.sponsor || '—') + '</td><td>' + a.diretti + '</td><td>' + a.clienti + '</td><td><select data-q>' +
-        QUAL.map(function (q) { return '<option' + (q === a.qualifica ? ' selected' : '') + '>' + q + '</option>'; }).join('') + '</select></td><td><input type="checkbox" data-att' + (a.attivo ? ' checked' : '') + '></td><td><button class="btn btn-xs" data-act="ag" type="button">Salva</button></td></tr>';
+        date(a.data_nascita) + '</td><td>' + (a.iscritto_oam ? 'Sì' : 'No') + '</td><td>' + esc(a.sponsor || '—') + '</td><td>' + a.diretti + '</td><td>' + a.clienti + '</td><td>' + provv(a) + '</td><td><select data-q>' +
+        QUAL.map(function (q) { return '<option' + (q === a.qualifica ? ' selected' : '') + '>' + q + '</option>'; }).join('') + '</select></td><td><input type="checkbox" data-att' + (a.attivo ? ' checked' : '') + '></td><td><button class="btn btn-xs" data-act="ag" type="button">Salva</button> <button class="btn btn-xs btn-danger" data-act="delag" type="button">Elimina</button></td></tr>';
     }).join('');
   }
+  function provv(a) {
+    return '<span class="small">da liquidare <b>' + eur(a.prov_da_liquidare || 0) + '</b><br>liquidate <b>' + eur(a.prov_liquidate || 0) + '</b></span>';
+  }
   $('ta-agenti') && $('ta-agenti').addEventListener('click', function (e) {
-    var t = e.target, tr = t.closest('tr'); if (t.dataset.act !== 'ag') return;
+    var t = e.target, tr = t.closest('tr');
+    if (t.dataset.act === 'delag') {
+      var nome = tr.querySelector('b').textContent;
+      if (!confirm('Eliminare definitivamente l\'agente ' + nome + '? Non potrà più accedere; la sua rete passa al suo sponsor e i suoi clienti restano senza agente.')) return;
+      t.disabled = true;
+      rpc('admin_delete_agent', { p_id: tr.dataset.id }).then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
+      return;
+    }
+    if (t.dataset.act !== 'ag') return;
     t.disabled = true;
     rpc('admin_set_agent', { p_id: tr.dataset.id, p_qualifica: tr.querySelector('[data-q]').value, p_attivo: tr.querySelector('[data-att]').checked })
       .then(loadAdmin).catch(function (e2) { t.disabled = false; adminErr(e2); });
   });
+  // totals always visible on top of the administration panel
+  function renderAdminSum(clients, prov) {
+    function tot(st) { var r = prov.filter(function (m) { return m.stato === st; }); return [r.length, r.reduce(function (s, m) { return s + Number(m.importo); }, 0)]; }
+    var da = tot('da_liquidare'), li = tot('liquidata');
+    var inCorso = clients.filter(function (c) { return c.stato === 'in_valutazione' || c.stato === 'accettato'; }).length;
+    $('admin-sum').innerHTML = [
+      ['Provvigioni da liquidare', eur(da[1]), da[0] + ' provvigioni'],
+      ['Provvigioni liquidate', eur(li[1]), li[0] + ' provvigioni'],
+      ['Pratiche in corso', inCorso, 'in valutazione o accettate'],
+      ['Clienti totali', clients.length, clients.filter(function (c) { return c.stato === 'pagato' || c.stato === 'concluso'; }).length + ' hanno pagato']
+    ].map(function (x) { return '<div class="card"><span class="muted small">' + x[0] + '</span><b>' + x[1] + '</b><span class="muted small">' + x[2] + '</span></div>'; }).join('');
+  }
   function renderAdminProv(rows) {
     $('ta-prov').innerHTML = rows.length ? rows.map(function (m) {
       return '<tr data-id="' + m.id + '"><td><b>' + esc(m.agente || '—') + '</b><br><span class="muted">' + esc(m.agente_email || '') + '</span></td><td>' + esc(m.cliente) + '</td><td>' + m.livello + '°</td><td><b>' + eur(m.importo) + '</b></td><td>' +

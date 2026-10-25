@@ -6,7 +6,7 @@
 <title>Richiesta di valutazione microcredito | Job Academy srl</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/styles.css?v=4">
+<link rel="stylesheet" href="assets/styles.css?v=5">
 </head>
 <body>
 <header class="nav"><div class="wrap"><span class="brand"><span class="brand-mark" aria-hidden="true">JA</span>Job Academy <small>· Microcredito</small></span></div></header>
@@ -76,6 +76,15 @@
               <span></span>
             </div>
           </fieldset>
+          <fieldset class="amico">
+            <legend>Porta un amico: 200 € di sconto</legend>
+            <p class="amico-box">Per ogni amico che presenti e la cui pratica viene <strong>accettata</strong>, hai <strong>200 € di sconto</strong> sul costo della tua pratica. Dopo l'invio ti diamo il link da girare ai tuoi amici: è lo stesso link che hai usato tu, con il tuo codice personale.</p>
+            <p class="notice" id="amico-note" hidden>Ti ha presentato un amico: se la tua pratica viene accettata, riceverà 200 € di sconto. Grazie!</p>
+            <div class="row">
+              <label class="f">Quanti amici pensi di presentarci? <span class="muted">(facoltativo)</span><select name="amici_previsti"><option value="0">Nessuno per ora</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option value="10">Più di 5</option></select></label>
+              <label class="f" id="presentato-wrap">Ti ha consigliato un amico? <span class="muted">(nome e cognome, facoltativo)</span><input type="text" name="presentato_da" maxlength="120" autocomplete="off"></label>
+            </div>
+          </fieldset>
           <div class="gdpr">
             <p><strong>Informativa breve.</strong> Titolare: Job Academy srl, Via Stefano Canzio 50r, Genova, P.IVA 03071340990. Usiamo i tuoi dati per valutare con te l'accesso al microcredito e i nostri servizi di consulenza. Li vede il consulente che ti segue; i consulenti sopra di lui vedono solo le tue iniziali e lo stato della pratica. Li conserviamo per 24 mesi dall'ultimo contatto, oppure per 10 anni se diventi nostro cliente. Puoi chiedere accesso, correzione o cancellazione a info@jobacademyilma.com. <a href="privacy.html" target="_blank" rel="noopener">Informativa completa</a>.</p>
             <label class="check"><input type="checkbox" name="consenso" required><span>Ho letto l'<a href="privacy.html" target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati personali, e dei documenti se li allego, per la valutazione del microcredito. <em>(obbligatorio)</em></span></label>
@@ -90,9 +99,9 @@
   </section>
 </main>
 <footer><div class="wrap"><strong style="color:#fff">Job Academy srl</strong><span>Via Stefano Canzio 50r, Genova · P.IVA 03071340990 · <a href="mailto:info@jobacademyilma.com">info@jobacademyilma.com</a></span><span>Job Academy srl offre servizi di consulenza: non concede credito e non svolge mediazione creditizia. <a href="privacy.html">Informativa privacy</a></span></div></footer>
-<script src="config.js?v=4"></script>
+<script src="config.js?v=5"></script>
 <script src="vendor/supabase.js"></script>
-<script src="assets/common.js?v=4"></script>
-<script src="assets/richiesta.js?v=4"></script>
+<script src="assets/common.js?v=5"></script>
+<script src="assets/richiesta.js?v=5"></script>
 </body>
 </html>

@@ -21,6 +21,9 @@
     box.hidden = false;
   });
 
+  var amico = MIA.param('amico').toUpperCase();
+  if (amico) { d.getElementById('amico-note').hidden = false; d.getElementById('presentato-wrap').hidden = true; }
+
   var MAX = 10 * 1024 * 1024, OK = /\.(pdf|jpe?g|png)$/i;
   function uid() { return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)); }
 
@@ -48,15 +51,23 @@
         ragione_sociale: f.ragione_sociale.value, partita_iva: f.partita_iva.value, forma_giuridica: f.forma_giuridica.value,
         amministratore: f.amministratore.value, telefono: f.telefono.value, email: f.email.value, importo: f.importo.value,
         attivita: tipo === 'azienda' ? f.attivita_az.value : f.attivita_pf.value, documenti: paths,
+        amici_previsti: f.amici_previsti.value, amico: amico, presentato_da: amico ? '' : f.presentato_da.value,
         consenso_privacy: f.consenso.checked ? 'true' : 'false', consenso_inoltro: f.inoltro.checked, versione_privacy: MIA.privacyVersion
       } });
     }).then(function (r) {
       if (r.error) throw r.error;
+      var saved = typeof r.data === 'object' && r.data ? r.data : { id: r.data };
       // emails to Job Academy, the agent and the client; a failure here must not hide the saved request
-      return MIA.db.functions.invoke('notifica-cliente', { body: { id: r.data } }).catch(function () {});
-    }).then(function () {
+      return MIA.db.functions.invoke('notifica-cliente', { body: { id: saved.id } }).catch(function () {}).then(function () { return saved; });
+    }).then(function (saved) {
       d.querySelector('.tabs').hidden = true;
-      card.innerHTML = '<div class="ok-box"><h3>Richiesta inviata</h3><p style="margin:0">Grazie. Il tuo consulente ti ricontatta a breve per spiegarti i prossimi passi. Per qualsiasi dubbio scrivi a info@jobacademyilma.com.</p></div>';
+      var share = saved.codice ? MIA.base + 'richiesta.html?' + (ref ? 'ref=' + encodeURIComponent(ref) + '&' : '') + 'amico=' + saved.codice : '';
+      card.innerHTML = '<div class="ok-box"><h3>Richiesta inviata</h3><p style="margin:0">Grazie. Il tuo consulente ti ricontatta a breve per spiegarti i prossimi passi. Per qualsiasi dubbio scrivi a info@jobacademyilma.com.</p></div>' +
+        (share ? '<div class="amico-share"><h3>Porta un amico, risparmi 200 €</h3><p>Gira questo link ai tuoi amici che vogliono avviare o far crescere un\'attività. Per ogni amico la cui pratica viene accettata hai <strong>200 € di sconto</strong> sulla tua pratica. Te lo mandiamo anche per email.</p>' +
+          '<div class="linkbox"><code id="share-link">' + MIA.esc(share) + '</code><button class="btn btn-xs" type="button" id="share-copy">Copia</button></div>' +
+          '<p style="margin:12px 0 0"><a class="btn btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('Ti consiglio Job Academy per il microcredito: la valutazione è gratuita. Parti da qui: ' + share) + '">Condividi su WhatsApp</a></p></div>' : '');
+      var cp = d.getElementById('share-copy');
+      if (cp) cp.addEventListener('click', function () { navigator.clipboard.writeText(share).then(function () { cp.textContent = 'Copiato'; }); });
       scrollTo({ top: 0, behavior: 'smooth' });
     }).catch(function (e2) {
       err.textContent = MIA.errMsg(e2); btn.disabled = false; btn.textContent = 'Invia la richiesta';

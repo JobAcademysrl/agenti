@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     if (error) throw error;
     if (!c) return json({ ok: true, skipped: true });
     const { data: a } = c.agent_id
-      ? await db.from("agents").select("nome, cognome, email, telefono").eq("id", c.agent_id).maybeSingle()
+      ? await db.from("agents").select("nome, cognome, email, telefono, ref_code").eq("id", c.agent_id).maybeSingle()
       : { data: null };
 
     const chi = c.tipo === "azienda" ? `${c.ragione_sociale} (P.IVA ${c.partita_iva})` : `${c.nome} ${c.cognome} (CF ${c.codice_fiscale})`;
@@ -41,6 +41,8 @@ Deno.serve(async (req) => {
       ["Costo pratica", eur(c.costo_pratica)], ["Attività / uso", c.attivita || "—"],
       ["Documenti allegati", c.documenti?.length ? `${c.documenti.length} (li apri dall'area Amministrazione)` : "nessuno"],
       ["Consenso inoltro all'ente erogatore", c.consenso_inoltro ? "sì" : "no"],
+      ["Amici che pensa di presentare", c.amici_previsti ?? 0],
+      ["Presentato da", c.presentato_da ? "un cliente (codice amico collegato)" : c.presentato_da_testo || "—"],
       ["Agente", a ? `${a.nome} ${a.cognome} · ${a.email} · ${a.telefono}` : "nessuno (richiesta diretta)"],
     ];
     const tabella = `<table cellpadding="6" style="border-collapse:collapse;font:14px system-ui,Arial">${righe.map(([k, v]) => `<tr><td style="color:#5f636b">${esc(k)}</td><td><b>${esc(v)}</b></td></tr>`).join("")}</table>`;
@@ -51,11 +53,13 @@ Deno.serve(async (req) => {
     });
     const from = `"Job Academy" <${Deno.env.get("SMTP_USER")}>`;
     const area = "https://agenti.jobacademysrl.com/area.html";
+    const amicoLink = c.codice_amico
+      ? `https://agenti.jobacademysrl.com/richiesta.html?${a?.ref_code ? `ref=${a.ref_code}&` : ""}amico=${c.codice_amico}` : "";
     const invii = [
       smtp.sendMail({ from, to: ADMIN, replyTo: c.email, subject: `Nuova richiesta microcredito: ${chi}`,
         html: `<p>È arrivata una nuova richiesta dalla piattaforma MIA.</p>${tabella}<p><a href="${area}">Apri l'area Amministrazione</a></p>` }),
       smtp.sendMail({ from, to: c.email, replyTo: ADMIN, subject: "Abbiamo ricevuto la tua richiesta · Job Academy",
-        html: `<p>Ciao ${esc(c.nome || c.amministratore || "")},</p><p>abbiamo ricevuto la tua richiesta di valutazione per il microcredito. ${a ? `Ti ricontatterà a breve il tuo consulente, <b>${esc(a.nome)} ${esc(a.cognome)}</b>.` : "Ti ricontatteremo a breve."}</p><p>Ricorda: la domanda di microcredito è gratuita, e lo è la verifica del credito dell'ente erogatore. La decisione sul finanziamento e il tasso spettano all'ente erogatore.</p><p>Per qualsiasi dubbio rispondi a questa email.</p><p>Job Academy srl · Via Stefano Canzio 50r, Genova</p>` }),
+        html: `<p>Ciao ${esc(c.nome || c.amministratore || "")},</p><p>abbiamo ricevuto la tua richiesta di valutazione per il microcredito. ${a ? `Ti ricontatterà a breve il tuo consulente, <b>${esc(a.nome)} ${esc(a.cognome)}</b>.` : "Ti ricontatteremo a breve."}</p>${amicoLink ? `<p><b>Porta un amico, risparmi 200 €.</b> Per ogni amico che compila la richiesta da questo link e la cui pratica viene accettata, hai 200 € di sconto sulla tua pratica:<br><a href="${amicoLink}">${amicoLink}</a></p>` : ""}<p>Ricorda: la domanda di microcredito è gratuita, e lo è la verifica del credito dell'ente erogatore. La decisione sul finanziamento e il tasso spettano all'ente erogatore.</p><p>Per qualsiasi dubbio rispondi a questa email.</p><p>Job Academy srl · Via Stefano Canzio 50r, Genova</p>` }),
     ];
     if (a?.email) invii.push(smtp.sendMail({ from, to: a.email, replyTo: ADMIN, subject: `Nuovo cliente dal tuo link: ${chi}`,
       html: `<p>Ciao ${esc(a.nome)},</p><p>un nuovo cliente ha compilato il modulo dal tuo link.</p>${tabella.replace(/<tr><td[^>]*>Agente<\/td>.*?<\/tr>/, "")}<p>Contattalo per i prossimi passi e ricorda le regole MIA: nessuna promessa sull'esito, nessun pagamento a te. Lo stato della pratica lo trovi nella <a href="${area}">tua area</a>.</p>` }));

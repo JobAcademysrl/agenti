@@ -6,7 +6,7 @@
 <title>La mia area · Piattaforma MIA | Job Academy srl</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/styles.css?v=4">
+<link rel="stylesheet" href="assets/styles.css?v=5">
 </head>
 <body>
 <header class="nav"><div class="wrap"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">MIA</span>Job Academy <small>· Agenti</small></a><div class="nav-cta"><button class="btn btn-sm btn-outline" id="logout" type="button">Esci</button></div></div></header>
@@ -53,6 +53,7 @@
           <p style="margin:12px 0 0"><a class="btn btn-sm btn-outline" id="wa-cliente" target="_blank" rel="noopener">Condividi su WhatsApp</a></p>
         </div>
       </div>
+      <div class="amico-box" style="margin-top:20px;padding:22px 24px;border-radius:22px"><h3 style="margin-bottom:6px">Porta un amico: −200 € per il cliente</h3>Quando un cliente compila il modulo dal tuo link, riceve il suo <strong>link amico</strong>. Per ogni amico che si iscrive da lì e la cui pratica viene accettata, il cliente ha 200 € di sconto sulla sua pratica. Gli amici sono clienti tuoi: più pratiche da un solo contatto. Ricordalo sempre alla fine del colloquio, senza promettere lo sconto prima dell'accettazione.</div>
       <div class="grid4" style="margin-top:20px" id="by-status"></div>
       <div class="card" style="margin-top:20px">
         <h3>Come e quando vieni pagato</h3>
@@ -73,7 +74,7 @@
 
     <div class="panel" id="p-clienti" role="tabpanel" hidden>
       <p class="muted small">I clienti portati da te compaiono con nome e contatti; quelli della tua rete solo con le iniziali, per la privacy. La provvigione si matura quando il cliente paga.</p>
-      <div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Livello</th><th>Agente</th><th>Cliente</th><th>Contatti</th><th>Importo</th><th>Costo pratica</th><th>Stato</th><th>Tua provvigione</th></tr></thead><tbody id="tb-clienti"></tbody></table></div>
+      <div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Livello</th><th>Agente</th><th>Cliente</th><th>Contatti</th><th>Importo</th><th>Costo pratica</th><th>Stato</th><th>Amici</th><th>Sconto cliente</th><th>Tua provvigione</th></tr></thead><tbody id="tb-clienti"></tbody></table></div>
     </div>
 
     <div class="panel" id="p-prov" role="tabpanel" hidden>
@@ -102,15 +103,16 @@
         <button class="tab" role="tab" id="ta-pv" aria-controls="pa-pv" aria-selected="false" tabindex="-1">Provvigioni</button>
       </div>
       <p class="err" id="admin-err" aria-live="polite"></p>
-      <div class="panel" id="pa-cl" role="tabpanel"><div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Cliente</th><th>Contatti</th><th>Agente</th><th>Importo</th><th>Costo</th><th>Stato</th><th>Cambia stato</th><th>Documenti</th></tr></thead><tbody id="ta-clienti"></tbody></table></div></div>
-      <div class="panel" id="pa-ag" role="tabpanel" hidden><div class="tbl-wrap"><table class="data"><thead><tr><th>Iscritto</th><th>Agente</th><th>Contatti</th><th>Nascita</th><th>OAM</th><th>Sponsor</th><th>Diretti</th><th>Clienti</th><th>Qualifica</th><th>Attivo</th><th></th></tr></thead><tbody id="ta-agenti"></tbody></table></div></div>
+      <div class="sum" id="admin-sum"></div>
+      <div class="panel" id="pa-cl" role="tabpanel"><div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Cliente</th><th>Contatti</th><th>Agente</th><th>Importo</th><th>Costo</th><th>Amici e sconto</th><th>Presentato da</th><th>Stato</th><th>Cambia stato</th><th>Documenti</th><th></th></tr></thead><tbody id="ta-clienti"></tbody></table></div></div>
+      <div class="panel" id="pa-ag" role="tabpanel" hidden><div class="tbl-wrap"><table class="data"><thead><tr><th>Iscritto</th><th>Agente</th><th>Contatti</th><th>Nascita</th><th>OAM</th><th>Sponsor</th><th>Diretti</th><th>Clienti</th><th>Provvigioni</th><th>Qualifica</th><th>Attivo</th><th></th></tr></thead><tbody id="ta-agenti"></tbody></table></div></div>
       <div class="panel" id="pa-pv" role="tabpanel" hidden><div class="tbl-wrap"><table class="data"><thead><tr><th>Agente</th><th>Cliente</th><th>Livello</th><th>Importo</th><th>Scadenza</th><th>Stato</th><th></th></tr></thead><tbody id="ta-prov"></tbody></table></div></div>
     </div>
   </div>
 </main>
-<script src="config.js?v=4"></script>
+<script src="config.js?v=5"></script>
 <script src="vendor/supabase.js"></script>
-<script src="assets/common.js?v=4"></script>
-<script src="assets/area.js?v=4"></script>
+<script src="assets/common.js?v=5"></script>
+<script src="assets/area.js?v=5"></script>
 </body>
 </html>
