@@ -28,7 +28,6 @@
     e.preventDefault();
     sync();
     var f = form.elements, err = form.querySelector('.err'), btn = form.querySelector('button[type=submit]');
-    if (f.sito.value) return;
     if (!form.checkValidity()) { err.textContent = 'Compila i campi obbligatori e dai il consenso privacy.'; form.reportValidity(); return; }
     var panel = d.getElementById(tipo === 'azienda' ? 'panel-az' : 'panel-pf'), files = [];
     panel.querySelectorAll('input[type=file]').forEach(function (i) { [].forEach.call(i.files, function (file) { files.push({ doc: i.dataset.doc, file: file }); }); });

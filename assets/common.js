@@ -12,7 +12,10 @@
   MIA.base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
   MIA.param = function (k) { return new URLSearchParams(location.search).get(k) || ''; };
   MIA.eur = function (n, dec) {
-    return (Number(n) || 0).toLocaleString('it-IT', { style: 'currency', currency: 'EUR', useGrouping: 'always', minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 });
+    var o = { style: 'currency', currency: 'EUR', minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 };
+    // 'always' groups 4-digit amounts too (3.500 €); older browsers reject it, so fall back to the default
+    try { return (Number(n) || 0).toLocaleString('it-IT', Object.assign({ useGrouping: 'always' }, o)); }
+    catch (e) { return (Number(n) || 0).toLocaleString('it-IT', o); }
   };
   MIA.esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   MIA.stati = { in_valutazione: 'In valutazione', accettato: 'Accettato', respinto: 'Respinto', pagato: 'Pagato', concluso: 'Concluso', da_liquidare: 'Da liquidare', liquidata: 'Liquidata' };

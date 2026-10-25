@@ -40,7 +40,6 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var f = form.elements, err = form.querySelector('.err'), btn = form.querySelector('button[type=submit]');
-    if (f.sito.value) return; // honeypot
     function stop(msg, field) {
       err.textContent = msg;
       if (field && field.focus) field.focus();
