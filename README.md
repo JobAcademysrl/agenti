@@ -31,7 +31,8 @@ Privacy nella rete: ogni agente vede i propri clienti con nome e contatti, quell
 5. **Chiavi**: in *Project Settings → API* copia *Project URL* e la chiave *anon public* in `config.js`. La chiave anon è pubblica per natura: i dati sono protetti dalle regole del database.
 6. **Amministratore**: iscriviti dal sito con `info@jobacademyilma.com`, poi esegui in SQL Editor:
    `update public.agents set is_admin = true, qualifica = 'Director' where email = 'info@jobacademyilma.com';`
-7. **Dominio**: su IONOS aggiungi il record CNAME `agenti` → `jobacademysrl.github.io`. In GitHub, *Settings → Pages*: sorgente *Deploy from a branch*, branch `main`, cartella `/ (root)`; il file `CNAME` imposta già il dominio. Quando il certificato è pronto, attiva *Enforce HTTPS*.
+7. **Email ai clienti**: la funzione `supabase/functions/notifica-cliente` (già pubblicata) manda a ogni richiesta un'email a Job Academy, all'agente e al cliente. In *Edge Functions → Secrets* servono `SMTP_USER` (info@jobacademyilma.com) e `SMTP_PASS` (password per le app di Google). Usa la porta 465: Supabase blocca la 587.
+8. **Dominio**: su IONOS aggiungi il record CNAME `agenti` → `jobacademysrl.github.io`. In GitHub, *Settings → Pages*: sorgente *Deploy from a branch*, branch `main`, cartella `/ (root)`; il file `CNAME` imposta già il dominio. Quando il certificato è pronto, attiva *Enforce HTTPS*.
 
 Finché `config.js` è vuoto il sito è visibile ma i moduli mostrano "Piattaforma in attivazione".
 

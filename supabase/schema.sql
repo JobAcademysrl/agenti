@@ -54,8 +54,10 @@ create table if not exists public.clients (
   stato_aggiornato_at timestamptz not null default now(),
   pagato_at timestamptz,
   concluso_at timestamptz,
+  notificato_at timestamptz,  -- email di notifica inviate (funzione notifica-cliente)
   created_at timestamptz not null default now()
 );
+alter table public.clients add column if not exists notificato_at timestamptz;
 create index if not exists clients_agent_idx on public.clients (agent_id);
 
 create table if not exists public.commissions (

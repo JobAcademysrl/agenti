@@ -52,6 +52,9 @@
       } });
     }).then(function (r) {
       if (r.error) throw r.error;
+      // emails to Job Academy, the agent and the client; a failure here must not hide the saved request
+      return MIA.db.functions.invoke('notifica-cliente', { body: { id: r.data } }).catch(function () {});
+    }).then(function () {
       d.querySelector('.tabs').hidden = true;
       card.innerHTML = '<div class="ok-box"><h3>Richiesta inviata</h3><p style="margin:0">Grazie. Il tuo consulente ti ricontatta a breve per spiegarti i prossimi passi. Per qualsiasi dubbio scrivi a info@jobacademyilma.com.</p></div>';
       scrollTo({ top: 0, behavior: 'smooth' });
