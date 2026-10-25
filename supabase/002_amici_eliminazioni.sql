@@ -1,7 +1,6 @@
 -- Piattaforma MIA · aggiornamento 2: "Porta un amico" (200 € di sconto per amico accettato),
 -- eliminazione di clienti e agenti dall'amministrazione, totali delle provvigioni per agente.
--- Da eseguire dopo schema.sql (SQL Editor → Run). Si può rieseguire. Nessuna istruzione distruttiva:
--- le funzioni con un risultato diverso hanno un nome nuovo (_v2) invece di essere sostituite.
+-- Da eseguire dopo schema.sql (SQL Editor → Run). Si può rieseguire.
 
 -- ---------- porta un amico ----------
 alter table public.clients add column if not exists amici_previsti int check (amici_previsti between 0 and 50);
@@ -34,7 +33,8 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- la richiesta del cliente ora restituisce anche il suo codice amico
-create or replace function public.submit_client_v2(p jsonb) returns jsonb
+drop function if exists public.submit_client(jsonb);
+create function public.submit_client(p jsonb) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare agent uuid; amico uuid; rec record; t text := p ->> 't';
 begin
@@ -69,7 +69,8 @@ begin
 end $$;
 
 -- area agente: amici e sconto sui propri clienti
-create or replace function public.my_clients_v2()
+drop function if exists public.my_clients();
+create function public.my_clients()
 returns table (id uuid, livello int, agente text, cliente text, telefono text, email text, tipo text,
                importo numeric, costo_pratica numeric, stato public.stato_cliente, creato_il date, provvigione numeric,
                amici_previsti int, amici_accettati int, sconto numeric, presentato_da text)
@@ -93,7 +94,8 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- ---------- amministrazione ----------
-create or replace function public.admin_clients_v2()
+drop function if exists public.admin_clients();
+create function public.admin_clients()
 returns table (id uuid, creato_il timestamptz, tipo text, cliente text, codice text, telefono text, email text,
                importo numeric, costo_pratica numeric, stato public.stato_cliente, agente text, agente_email text,
                documenti text[], consenso_inoltro boolean, note_admin text, attivita text, pagato_at timestamptz,
@@ -151,7 +153,8 @@ begin
   delete from auth.users where id = p_id;  -- cancella anche la scheda agente (on delete cascade)
 end $$;
 
-create or replace function public.admin_agents_v2()
+drop function if exists public.admin_agents();
+create function public.admin_agents()
 returns table (id uuid, nome text, cognome text, email text, telefono text, data_nascita date, iscritto_oam boolean,
                qualifica public.qualifica, attivo boolean, sponsor text, ref_code text, iscritto_il timestamptz,
                diretti int, clienti int, prov_da_liquidare numeric, prov_liquidate numeric)
@@ -170,14 +173,13 @@ begin
 end $$;
 
 -- ---------- permessi ----------
-revoke all on function public.submit_client_v2(jsonb), public.my_clients_v2(), public.admin_clients_v2(), public.admin_agents_v2(),
+revoke all on function public.submit_client(jsonb), public.my_clients(), public.admin_clients(), public.admin_agents(),
   public.admin_set_presentatore(uuid, text), public.admin_delete_client(uuid), public.admin_delete_agent(uuid),
   public.amici_accettati(uuid), public.gen_codice_amico() from public, anon, authenticated;
-grant execute on function public.submit_client_v2(jsonb) to anon, authenticated;
-grant execute on function public.my_clients_v2(), public.admin_clients_v2(), public.admin_agents_v2(), public.admin_set_presentatore(uuid, text),
+grant execute on function public.submit_client(jsonb) to anon, authenticated;
+grant execute on function public.my_clients(), public.admin_clients(), public.admin_agents(), public.admin_set_presentatore(uuid, text),
   public.admin_delete_client(uuid), public.admin_delete_agent(uuid) to authenticated;
 
-do $$ begin
-  create policy "admin elimina i documenti" on storage.objects for delete to authenticated
+drop policy if exists "admin elimina i documenti" on storage.objects;
+create policy "admin elimina i documenti" on storage.objects for delete to authenticated
   using (bucket_id = 'documenti-clienti' and public.is_admin());
-exception when duplicate_object then null; end $$;
