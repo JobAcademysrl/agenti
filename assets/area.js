@@ -7,6 +7,7 @@
   function date(s) { return s ? new Date(s).toLocaleDateString('it-IT') : '—'; }
   function fail(e) { $('loading').hidden = false; $('loading').textContent = MIA.errMsg(e); }
   function rpc(name, args) { return db.rpc(name, args || {}).then(function (r) { if (r.error) throw r.error; return r.data; }); }
+  function rpc2(name) { return MIA.rpc2(name).then(function (r) { if (r.error) throw r.error; return r.data; }); }
 
   $('logout').addEventListener('click', function () { db.auth.signOut().then(function () { location.href = 'accedi.html'; }); });
   d.querySelectorAll('[data-copy]').forEach(function (b) {
@@ -17,7 +18,7 @@
 
   db.auth.getSession().then(function (r) {
     if (!r.data.session) { location.replace('accedi.html'); return; }
-    return Promise.all([rpc('my_profile'), rpc('my_network'), rpc('my_clients'),
+    return Promise.all([rpc('my_profile'), rpc('my_network'), rpc2('my_clients'),
       db.from('commissions').select('livello, importo, stato, scadenza, created_at').order('created_at', { ascending: false })])
       .then(function (res) { render(res[0], res[1] || [], res[2] || [], (res[3] && res[3].data) || []); });
   }).catch(fail);
@@ -118,7 +119,7 @@
   function adminErr(e) { $('admin-err').textContent = e ? MIA.errMsg(e) : ''; }
   function loadAdmin() {
     adminErr();
-    return Promise.all([rpc('admin_clients'), rpc('admin_agents'), rpc('admin_commissions')]).then(function (r) {
+    return Promise.all([rpc2('admin_clients'), rpc2('admin_agents'), rpc('admin_commissions')]).then(function (r) {
       renderAdminClients(r[0] || []); renderAdminAgents(r[1] || []); renderAdminProv(r[2] || []); renderAdminSum(r[0] || [], r[2] || []);
     }).catch(adminErr);
   }

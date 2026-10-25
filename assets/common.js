@@ -35,6 +35,14 @@
     return true;
   };
 
+  // call the _v2 version of a database function, falling back to the original while the update is not applied
+  MIA.rpc2 = function (name, args) {
+    return MIA.db.rpc(name + '_v2', args || {}).then(function (r) {
+      if (r.error && /PGRST202|Could not find the function/i.test((r.error.code || '') + ' ' + (r.error.message || ''))) return MIA.db.rpc(name, args || {});
+      return r;
+    });
+  };
+
   // tabs
   MIA.tabs = function (root) {
     var tabs = [].slice.call(root.querySelectorAll('.tab'));

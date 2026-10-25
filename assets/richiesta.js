@@ -45,7 +45,7 @@
       return MIA.db.storage.from('documenti-clienti').upload(path, x.file, { contentType: x.file.type || undefined, upsert: false })
         .then(function (r) { if (r.error) throw r.error; return path; });
     })).then(function (paths) {
-      return MIA.db.rpc('submit_client', { p: {
+      return MIA.rpc2('submit_client', { p: {
         t: tipo, ref: ref,
         nome: f.nome.value, cognome: f.cognome.value, codice_fiscale: f.codice_fiscale.value.toUpperCase(),
         ragione_sociale: f.ragione_sociale.value, partita_iva: f.partita_iva.value, forma_giuridica: f.forma_giuridica.value,
