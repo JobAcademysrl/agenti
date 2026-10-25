@@ -1,2 +1,14 @@
+# Piattaforma riservata: niente motori di ricerca (anche meta noindex nelle pagine),
+# ma le app di messaggistica possono leggere l'anteprima dei link.
+User-agent: facebookexternalhit
+User-agent: Facebot
+User-agent: WhatsApp
+User-agent: TelegramBot
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: Slackbot-LinkExpanding
+User-agent: Discordbot
+Allow: /
+
 User-agent: *
 Disallow: /
