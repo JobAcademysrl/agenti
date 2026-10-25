@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accedi · Piattaforma MIA | Job Academy srl</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">MIA</span>Job Academy <small>· Agenti</small></a><div class="nav-cta"><a class="btn btn-sm" href="./#iscriviti">Diventa MIA</a></div></div></header>
+<main>
+  <section class="hero" style="min-height:calc(100vh - 68px)">
+    <div class="wrap grid2" style="align-items:center">
+      <div>
+        <p class="kicker" style="color:#cfe0ff">Area riservata</p>
+        <h1 style="font-size:clamp(40px,1.4rem + 3vw,64px)">Bentornato</h1>
+        <p class="lead">Scrivi l'email con cui ti sei iscritto: ti mandiamo un link per entrare, senza password.</p>
+      </div>
+      <div class="card" id="login-card" style="background:#fff;color:#191c1f">
+        <form id="login" novalidate>
+          <label class="f">Email<input type="email" name="email" autocomplete="email" required></label>
+          <p class="err" aria-live="polite"></p>
+          <div><button class="btn btn-blue" type="submit">Mandami il link</button></div>
+          <p class="small muted" style="margin:0">Non sei ancora iscritto? <a href="./#iscriviti">Diventa MIA</a>.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function () {
+  var form = document.getElementById('login'), card = document.getElementById('login-card');
+  if (MIA.offline(card)) return;
+  MIA.db.auth.getSession().then(function (r) { if (r.data.session) location.replace('area.html'); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var err = form.querySelector('.err'), btn = form.querySelector('button'), email = form.elements.email.value.trim();
+    if (!form.checkValidity()) { err.textContent = 'Scrivi un indirizzo email valido.'; return; }
+    btn.disabled = true; btn.textContent = 'Invio…';
+    MIA.db.auth.signInWithOtp({ email: email, options: { shouldCreateUser: false, emailRedirectTo: MIA.base + 'area.html' } }).then(function (r) {
+      if (r.error) throw r.error;
+      card.innerHTML = '<div class="ok-box"><h3>Controlla la tua email</h3><p style="margin:0">Se <strong>' + MIA.esc(email) + '</strong> è iscritto, ti è arrivato il link per entrare. Guarda anche nella posta indesiderata.</p></div>';
+    }).catch(function (e2) {
+      // an unknown email gets the same answer, so nobody can probe who is registered
+      if (/signups not allowed|not found/i.test(e2.message || '')) { card.innerHTML = '<div class="ok-box"><h3>Controlla la tua email</h3><p style="margin:0">Se <strong>' + MIA.esc(email) + '</strong> è iscritto, ti è arrivato il link per entrare.</p></div>'; return; }
+      err.textContent = MIA.errMsg(e2); btn.disabled = false; btn.textContent = 'Mandami il link';
+    });
+  });
+})();
+</script>
+</body>
+</html>

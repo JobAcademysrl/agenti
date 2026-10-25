@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richiesta di valutazione microcredito | Job Academy srl</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="nav"><div class="wrap"><span class="brand"><span class="brand-mark" aria-hidden="true">JA</span>Job Academy <small>· Microcredito</small></span></div></header>
+<main>
+  <section class="hero" style="padding:72px 0 64px">
+    <div class="wrap">
+      <p class="kicker" style="color:#cfe0ff">Microcredito</p>
+      <h1 style="font-size:clamp(36px,1.4rem + 3vw,64px);max-width:16ch">Iniziamo dalla valutazione</h1>
+      <p class="lead">Lasciaci i tuoi dati e, se li hai, i documenti. Il consulente che ti segue ti ricontatta e ti accompagna in ogni passaggio.</p>
+      <p id="invited" hidden></p>
+    </div>
+  </section>
+  <section class="soft" style="padding-top:48px">
+    <div class="wrap" style="max-width:860px">
+      <p class="notice"><strong>Cosa sapere prima.</strong> La domanda di microcredito all'ente erogatore è gratuita, e lo è anche la verifica del credito (circa 20 giorni lavorativi). Se scegli la consulenza Job Academy, il costo ti viene comunicato prima e si paga solo dopo il parere favorevole dell'ente erogatore. La decisione sul finanziamento e il tasso spettano all'ente erogatore.</p>
+      <div class="tabs" role="tablist" aria-label="Tipo di richiedente" style="margin:24px 0">
+        <button class="tab" role="tab" id="tab-pf" aria-controls="panel-pf" aria-selected="true">Persona fisica</button>
+        <button class="tab" role="tab" id="tab-az" aria-controls="panel-az" aria-selected="false" tabindex="-1">Azienda già esistente</button>
+      </div>
+      <div class="card" id="req-card">
+        <form id="req" novalidate>
+          <input type="text" name="sito" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="panel" id="panel-pf" role="tabpanel" aria-labelledby="tab-pf">
+            <fieldset>
+              <legend>I tuoi dati</legend>
+              <div class="row">
+                <label class="f">Nome<input type="text" name="nome" autocomplete="given-name" data-pf required></label>
+                <label class="f">Cognome<input type="text" name="cognome" autocomplete="family-name" data-pf required></label>
+              </div>
+              <label class="f">Codice fiscale<input type="text" name="codice_fiscale" maxlength="16" pattern="[A-Za-z0-9]{16}" title="16 caratteri, lettere e numeri" autocapitalize="characters" data-pf required></label>
+              <label class="f">Che attività vuoi avviare? <span class="muted">(facoltativo)</span><textarea name="attivita_pf"></textarea></label>
+            </fieldset>
+            <fieldset style="margin-top:18px">
+              <legend>Documenti <span class="muted" style="font-weight:400">(facoltativi, puoi mandarli dopo)</span></legend>
+              <label class="file">Documento d'identità (fronte e retro)<input type="file" data-doc="documento-identita" accept=".pdf,.jpg,.jpeg,.png" multiple><small>PDF, JPG o PNG</small></label>
+              <label class="file">Codice fiscale (tessera sanitaria)<input type="file" data-doc="codice-fiscale" accept=".pdf,.jpg,.jpeg,.png"><small>PDF, JPG o PNG</small></label>
+              <label class="file">Stato di famiglia<input type="file" data-doc="stato-famiglia" accept=".pdf,.jpg,.jpeg,.png"><small>Puoi chiederlo al Comune o scaricarlo da ANPR</small></label>
+            </fieldset>
+          </div>
+          <div class="panel" id="panel-az" role="tabpanel" aria-labelledby="tab-az" hidden>
+            <fieldset>
+              <legend>Dati dell'azienda</legend>
+              <div class="row">
+                <label class="f">Ragione sociale<input type="text" name="ragione_sociale" autocomplete="organization" data-az required></label>
+                <label class="f">Partita IVA<input type="text" name="partita_iva" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" title="11 cifre" data-az required></label>
+              </div>
+              <div class="row">
+                <label class="f">Forma giuridica<select name="forma_giuridica" data-az required><option value="">Scegli…</option><option>SRL o SRLS (fino a 100.000 €)</option><option>Ditta individuale (fino a 75.000 €)</option><option>Libero professionista (fino a 75.000 €)</option><option>Società di persone: SNC, SAS (fino a 75.000 €)</option><option>Altro</option></select></label>
+                <label class="f">Nome e cognome dell'amministratore<input type="text" name="amministratore" autocomplete="name" data-az required></label>
+              </div>
+              <label class="f">A cosa ti servono i soldi? <span class="muted">(facoltativo)</span><textarea name="attivita_az"></textarea></label>
+            </fieldset>
+            <fieldset style="margin-top:18px">
+              <legend>Documenti <span class="muted" style="font-weight:400">(facoltativi, puoi mandarli dopo)</span></legend>
+              <label class="file">Documento d'identità dell'amministratore (fronte e retro)<input type="file" data-doc="documento-amministratore" accept=".pdf,.jpg,.jpeg,.png" multiple><small>PDF, JPG o PNG</small></label>
+              <label class="file">Visura camerale<input type="file" data-doc="visura-camerale" accept=".pdf,.jpg,.jpeg,.png"><small>PDF, recente</small></label>
+              <label class="file">Ultimo bilancio <span class="muted">(se presente)</span><input type="file" data-doc="ultimo-bilancio" accept=".pdf,.jpg,.jpeg,.png"><small>PDF</small></label>
+            </fieldset>
+          </div>
+          <fieldset>
+            <legend>Contatti</legend>
+            <div class="row">
+              <label class="f">Telefono<input type="tel" name="telefono" autocomplete="tel" placeholder="+39 ..." required></label>
+              <label class="f">Email<input type="email" name="email" autocomplete="email" required></label>
+            </div>
+            <div class="row">
+              <label class="f">Importo che ti interessa <span class="muted">(facoltativo)</span><input type="number" name="importo" min="1000" max="100000" step="500" inputmode="numeric" placeholder="es. 30000"></label>
+              <span></span>
+            </div>
+          </fieldset>
+          <div class="gdpr">
+            <p><strong>Informativa breve.</strong> Titolare: Job Academy srl, Via Stefano Canzio 50r, Genova, P.IVA 03071340990. Usiamo i tuoi dati per valutare con te l'accesso al microcredito e i nostri servizi di consulenza. Li vede il consulente che ti segue; i consulenti sopra di lui vedono solo le tue iniziali e lo stato della pratica. Li conserviamo per 24 mesi dall'ultimo contatto, oppure per 10 anni se diventi nostro cliente. Puoi chiedere accesso, correzione o cancellazione a info@jobacademyilma.com. <a href="privacy.html" target="_blank" rel="noopener">Informativa completa</a>.</p>
+            <label class="check"><input type="checkbox" name="consenso" required><span>Ho letto l'<a href="privacy.html" target="_blank" rel="noopener">informativa privacy</a> e acconsento al trattamento dei miei dati personali, e dei documenti se li allego, per la valutazione del microcredito. <em>(obbligatorio)</em></span></label>
+            <label class="check"><input type="checkbox" name="inoltro"><span>Acconsento che i miei dati e documenti siano inoltrati all'ente erogatore, se lo chiederò, per la verifica di accesso al credito. <em>(facoltativo)</em></span></label>
+          </div>
+          <p class="err" aria-live="polite"></p>
+          <div><button class="btn btn-blue" type="submit">Invia la richiesta</button></div>
+          <p class="small muted" style="margin:0">Allegati: massimo 10 MB per file, PDF, JPG o PNG.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><strong style="color:#fff">Job Academy srl</strong><span>Via Stefano Canzio 50r, Genova · P.IVA 03071340990 · <a href="mailto:info@jobacademyilma.com">info@jobacademyilma.com</a></span><span>Job Academy srl offre servizi di consulenza: non concede credito e non svolge mediazione creditizia. <a href="privacy.html">Informativa privacy</a></span></div></footer>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/richiesta.js"></script>
+</body>
+</html>

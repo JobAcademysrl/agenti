@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La mia area · Piattaforma MIA | Job Academy srl</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">MIA</span>Job Academy <small>· Agenti</small></a><div class="nav-cta"><button class="btn btn-sm btn-outline" id="logout" type="button">Esci</button></div></div></header>
+<main>
+  <div class="dash-head">
+    <div class="wrap">
+      <p id="loading" class="lead">Caricamento…</p>
+      <div id="head" hidden>
+        <span class="badge" id="h-q"></span>
+        <h1 id="h-name" style="margin-top:12px"></h1>
+        <p class="muted" id="h-sub" style="color:#c9d4f0;margin:8px 0 0"></p>
+        <div class="stats">
+          <div class="stat"><b id="s-clienti">0</b><span>clienti portati da te</span></div>
+          <div class="stat"><b id="s-rete">0</b><span>agenti nella tua rete</span></div>
+          <div class="stat"><b id="s-maturate">0 €</b><span>provvigioni maturate</span></div>
+          <div class="stat"><b id="s-potenziale">0 €</b><span>potenziali sulle pratiche in corso</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash wrap" id="dash" hidden>
+    <div class="tabs" role="tablist" aria-label="Sezioni dell'area">
+      <button class="tab" role="tab" id="t-home" aria-controls="p-home" aria-selected="true">Panoramica</button>
+      <button class="tab" role="tab" id="t-rete" aria-controls="p-rete" aria-selected="false" tabindex="-1" data-onshow="drawTree">La mia rete</button>
+      <button class="tab" role="tab" id="t-clienti" aria-controls="p-clienti" aria-selected="false" tabindex="-1">Clienti</button>
+      <button class="tab" role="tab" id="t-prov" aria-controls="p-prov" aria-selected="false" tabindex="-1">Provvigioni</button>
+      <button class="tab" role="tab" id="t-form" aria-controls="p-form" aria-selected="false" tabindex="-1">Formazione</button>
+      <button class="tab" role="tab" id="t-admin" aria-controls="p-admin" aria-selected="false" tabindex="-1" data-onshow="loadAdmin" hidden>Amministrazione</button>
+    </div>
+
+    <div class="panel" id="p-home" role="tabpanel">
+      <div class="grid2">
+        <div class="card">
+          <h3>Invita un agente</h3>
+          <p class="muted">Chi si iscrive da questo link entra nella tua rete.</p>
+          <div class="linkbox"><code id="link-agente"></code><button class="btn btn-xs" type="button" data-copy="link-agente">Copia</button></div>
+          <p style="margin:12px 0 0"><a class="btn btn-sm btn-outline" id="wa-agente" target="_blank" rel="noopener">Condividi su WhatsApp</a></p>
+        </div>
+        <div class="card">
+          <h3>Link per i clienti</h3>
+          <p class="muted">Il cliente che compila il modulo da questo link è collegato a te.</p>
+          <div class="linkbox"><code id="link-cliente"></code><button class="btn btn-xs" type="button" data-copy="link-cliente">Copia</button></div>
+          <p style="margin:12px 0 0"><a class="btn btn-sm btn-outline" id="wa-cliente" target="_blank" rel="noopener">Condividi su WhatsApp</a></p>
+        </div>
+      </div>
+      <div class="grid4" style="margin-top:20px" id="by-status"></div>
+      <div class="card" style="margin-top:20px">
+        <h3>Come e quando vieni pagato</h3>
+        <p class="muted" style="margin:0">Per ogni cliente che paga: <strong>500 €</strong> se l'hai portato tu, <strong>250 €</strong> se l'ha portato un tuo diretto, <strong>150 €</strong> al 3° livello e <strong>100 €</strong> al 4°. Il cliente paga dopo il parere favorevole dell'ente erogatore (circa 20 giorni lavorativi di verifica); Job Academy ti liquida entro 10 giorni lavorativi dal pagamento. Ricorda: nessun pagamento passa da te.</p>
+      </div>
+    </div>
+
+    <div class="panel" id="p-rete" role="tabpanel" hidden>
+      <div class="card">
+        <h3>La tua piramide</h3>
+        <div class="pyramid" id="pyramid"></div>
+        <h3>Chi c'è sotto di te</h3>
+        <p class="muted small">Fino al 4° livello. Telefono ed email sono visibili solo per i tuoi iscritti diretti.</p>
+        <div class="tree" id="tree"></div>
+        <div id="direct"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="p-clienti" role="tabpanel" hidden>
+      <p class="muted small">I clienti portati da te compaiono con nome e contatti; quelli della tua rete solo con le iniziali, per la privacy. La provvigione si matura quando il cliente paga.</p>
+      <div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Livello</th><th>Agente</th><th>Cliente</th><th>Contatti</th><th>Importo</th><th>Costo pratica</th><th>Stato</th><th>Tua provvigione</th></tr></thead><tbody id="tb-clienti"></tbody></table></div>
+    </div>
+
+    <div class="panel" id="p-prov" role="tabpanel" hidden>
+      <div class="grid4" id="prov-sum"></div>
+      <div class="tbl-wrap" style="margin-top:20px"><table class="data"><thead><tr><th>Maturata il</th><th>Livello</th><th>Importo</th><th>Da liquidare entro</th><th>Stato</th></tr></thead><tbody id="tb-prov"></tbody></table></div>
+    </div>
+
+    <div class="panel" id="p-form" role="tabpanel" hidden>
+      <div class="grid3">
+        <div class="card"><span class="kicker">Lunedì</span><h3>Benvenuto MIA</h3><p class="muted" style="margin:0">Microcredito, Formula VIA e regole, per chi è appena entrato.</p></div>
+        <div class="card"><span class="kicker">Mercoledì</span><h3>Il colloquio in 15 minuti</h3><p class="muted" style="margin:0">Simulazioni dal vivo e risposte alle obiezioni.</p></div>
+        <div class="card"><span class="kicker">Venerdì</span><h3>Domande e casi reali</h3><p class="muted" style="margin:0">Pratiche in corso, documenti, aggiornamenti.</p></div>
+      </div>
+      <p class="notice" style="margin-top:20px">Orari e link delle sessioni vengono comunicati da Job Academy via email agli iscritti.</p>
+      <div class="downloads">
+        <a class="dl" href="guide/guida-15-minuti.pdf" download style="background:var(--surface)"><i>PDF</i><span><b>Il colloquio in 15 minuti</b><small>Scaletta</small></span></a>
+        <a class="dl" href="guide/regole-mia.pdf" download style="background:var(--surface)"><i>PDF</i><span><b>Le regole del MIA</b><small>Cosa non dire</small></span></a>
+        <a class="dl" href="guide/checklist-documenti.pdf" download style="background:var(--surface)"><i>PDF</i><span><b>Checklist documenti</b><small>Per il cliente</small></span></a>
+      </div>
+    </div>
+
+    <div class="panel" id="p-admin" role="tabpanel" hidden>
+      <div class="tabs" role="tablist" aria-label="Amministrazione" id="admin-tabs">
+        <button class="tab" role="tab" id="ta-cl" aria-controls="pa-cl" aria-selected="true">Clienti</button>
+        <button class="tab" role="tab" id="ta-ag" aria-controls="pa-ag" aria-selected="false" tabindex="-1">Agenti</button>
+        <button class="tab" role="tab" id="ta-pv" aria-controls="pa-pv" aria-selected="false" tabindex="-1">Provvigioni</button>
+      </div>
+      <p class="err" id="admin-err" aria-live="polite"></p>
+      <div class="panel" id="pa-cl" role="tabpanel"><div class="tbl-wrap"><table class="data"><thead><tr><th>Data</th><th>Cliente</th><th>Contatti</th><th>Agente</th><th>Importo</th><th>Costo</th><th>Stato</th><th>Cambia stato</th><th>Documenti</th></tr></thead><tbody id="ta-clienti"></tbody></table></div></div>
+      <div class="panel" id="pa-ag" role="tabpanel" hidden><div class="tbl-wrap"><table class="data"><thead><tr><th>Iscritto</th><th>Agente</th><th>Contatti</th><th>Nascita</th><th>OAM</th><th>Sponsor</th><th>Diretti</th><th>Clienti</th><th>Qualifica</th><th>Attivo</th><th></th></tr></thead><tbody id="ta-agenti"></tbody></table></div></div>
+      <div class="panel" id="pa-pv" role="tabpanel" hidden><div class="tbl-wrap"><table class="data"><thead><tr><th>Agente</th><th>Cliente</th><th>Livello</th><th>Importo</th><th>Scadenza</th><th>Stato</th><th></th></tr></thead><tbody id="ta-prov"></tbody></table></div></div>
+    </div>
+  </div>
+</main>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/area.js"></script>
+</body>
+</html>
