@@ -337,7 +337,7 @@ revoke all on function public.ref_info(text), public.submit_client(jsonb), publi
   public.my_profile(), public.admin_clients(), public.admin_set_status(uuid, public.stato_cliente, text),
   public.admin_set_importo(uuid, numeric), public.admin_agents(), public.admin_set_agent(uuid, public.qualifica, boolean),
   public.admin_commissions(), public.admin_pay_commission(uuid), public.is_admin(), public.gen_ref_code(),
-  public.handle_new_agent() from public;
+  public.handle_new_agent() from public, anon, authenticated;  -- Supabase concede di default l'esecuzione ad anon e authenticated
 grant execute on function public.ref_info(text), public.submit_client(jsonb) to anon, authenticated;
 grant execute on function public.my_network(), public.my_clients(), public.my_profile(), public.is_admin(),
   public.admin_clients(), public.admin_set_status(uuid, public.stato_cliente, text), public.admin_set_importo(uuid, numeric),

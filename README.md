@@ -24,7 +24,7 @@ Privacy nella rete: ogni agente vede i propri clienti con nome e contatti, quell
 
 ## Attivazione (una volta sola)
 
-1. **Supabase**: crea un account su supabase.com e un progetto, regione **Europe (Frankfurt)**.
+1. **Supabase**: crea un account su supabase.com e un progetto, regione nell'Unione europea (il progetto attuale è in Irlanda, eu-west-1).
 2. **Database**: in Supabase apri *SQL Editor → New query*, incolla tutto `supabase/schema.sql` e premi *Run*.
 3. **Accessi**: in *Authentication → URL Configuration* imposta *Site URL* `https://agenti.jobacademysrl.com` e aggiungi `https://agenti.jobacademysrl.com/**` tra i *Redirect URLs*.
 4. **Email** (consigliato): in *Authentication → Emails → SMTP Settings* collega la casella di Job Academy; il servizio email di prova di Supabase invia pochi messaggi l'ora.
