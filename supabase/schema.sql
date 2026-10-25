@@ -85,11 +85,11 @@ create policy "agente legge le proprie provvigioni" on public.commissions for se
 -- ---------- regole economiche ----------
 -- Provvigione per livello di profondità (1 = chi ha portato il cliente)
 create or replace function public.provvigione_livello(l int) returns numeric
-language sql immutable as $$ select (array[500, 250, 150, 100])[l]::numeric $$;
+language sql immutable set search_path = '' as $$ select (array[500, 250, 150, 100])[l]::numeric $$;
 
 -- Aggiunge n giorni lavorativi (lun-ven; le festività non sono considerate)
 create or replace function public.add_working_days(d date, n int) returns date
-language plpgsql immutable as $$
+language plpgsql immutable set search_path = '' as $$
 declare r date := d; c int := 0;
 begin
   while c < n loop
