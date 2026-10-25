@@ -41,10 +41,19 @@
     e.preventDefault();
     var f = form.elements, err = form.querySelector('.err'), btn = form.querySelector('button[type=submit]');
     if (f.sito.value) return; // honeypot
-    if (!form.checkValidity()) { err.textContent = 'Compila tutti i campi e accetta informativa e regole.'; form.reportValidity(); return; }
+    function stop(msg, field) {
+      err.textContent = msg;
+      if (field && field.focus) field.focus();
+      err.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+    var names = { nome: 'il nome', cognome: 'il cognome', data_nascita: 'la data di nascita', telefono: 'il telefono', email: "l'email", oam: 'se sei iscritto al registro OAM', consenso: 'il consenso privacy', regole: "l'accettazione delle regole" };
+    var bad = [].filter.call(form.querySelectorAll('[required]'), function (i) { return !i.checkValidity(); })[0];
+    if (bad) return stop('Manca o non è valido: ' + (names[bad.name] || 'un campo') + '.', bad);
     var nascita = new Date(f.data_nascita.value), adult = new Date(); adult.setFullYear(adult.getFullYear() - 18);
-    if (!(nascita <= adult)) { err.textContent = 'Per iscriverti devi essere maggiorenne.'; return; }
-    if (!/^\+?[0-9 ]{6,20}$/.test(f.telefono.value.trim())) { err.textContent = 'Scrivi il telefono solo con numeri (es. +39 333 1234567).'; return; }
+    if (!(nascita <= adult)) return stop('Per iscriverti devi essere maggiorenne.', f.data_nascita);
+    // accept common phone formats (dots, dashes, brackets) and keep only digits, spaces and a leading +
+    var tel = f.telefono.value.trim().replace(/[^\d+ ]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!/^\+?[0-9 ]{6,20}$/.test(tel)) return stop('Il numero di telefono non sembra valido (es. +39 333 1234567).', f.telefono);
     err.textContent = ''; btn.disabled = true; btn.textContent = 'Invio in corso…';
     MIA.db.auth.signInWithOtp({
       email: f.email.value.trim(),
@@ -53,7 +62,7 @@
         emailRedirectTo: MIA.base + 'area.html',
         data: {
           tipo: 'agente', nome: f.nome.value.trim(), cognome: f.cognome.value.trim(), data_nascita: f.data_nascita.value,
-          telefono: f.telefono.value.trim(), iscritto_oam: form.querySelector('input[name=oam]:checked').value,
+          telefono: tel, iscritto_oam: form.querySelector('input[name=oam]:checked').value,
           consenso_privacy: 'true', versione_privacy: MIA.privacyVersion, ref: ref
         }
       }
@@ -61,7 +70,7 @@
       if (r.error) throw r.error;
       $('reg-card').innerHTML = '<div class="ok-box"><h3>Controlla la tua email</h3><p style="margin:0">Ti abbiamo mandato un link a <strong>' + MIA.esc(f.email.value) + '</strong>. Aprilo da questo dispositivo per entrare nella tua area MIA. Se non lo trovi, guarda nella posta indesiderata.</p></div>';
     }).catch(function (e2) {
-      err.textContent = MIA.errMsg(e2); btn.disabled = false; btn.textContent = 'Iscriviti';
+      stop(MIA.errMsg(e2)); btn.disabled = false; btn.textContent = 'Iscriviti';
     });
   });
 })();

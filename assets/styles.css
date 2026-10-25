@@ -206,6 +206,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: 
 .file input { display: block; margin-top: 8px; font: 400 14px var(--font); width: 100%; }
 .file small { display: block; color: var(--muted); font-weight: 400; margin-top: 4px; }
 .err { color: var(--red); font-size: 14px; min-height: 1em; margin: 0; }
+.err:not(:empty) { background: #fde7e5; color: #a3241b; border-radius: 12px; padding: 12px 16px; font-size: 15px; font-weight: 500; }
 .ok-box { background: #e8f7ee; color: #0b5a2e; border-radius: 16px; padding: 18px 20px; }
 .notice { background: #fff; border-left: 4px solid var(--blue); border-radius: 12px; padding: 14px 18px; }
 .offline { background: #fff4d6; color: #6b4b00; border-radius: 14px; padding: 14px 18px; font-size: 15px; }
