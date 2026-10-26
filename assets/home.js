@@ -31,6 +31,11 @@
   if (!form) return;
   if (MIA.offline($('reg-card'))) return;
   var ref = MIA.param('ref').toUpperCase();
+  // pre-fill from www.jobacademysrl.com (Diventa JAM): the visitor only completes the remaining fields
+  ['nome', 'cognome', 'email', 'telefono'].forEach(function (k) {
+    var v = MIA.param(k), el = form.elements[k];
+    if (v && el && !el.value) el.value = v.slice(0, 120);
+  });
   if (ref) MIA.db.rpc('ref_info', { code: ref }).then(function (r) {
     var who = r.data && r.data[0] && r.data[0].nome, box = $('invited');
     if (!who) return;
